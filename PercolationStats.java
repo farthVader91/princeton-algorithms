@@ -15,6 +15,10 @@ public class PercolationStats {
         trials = t;
     }
 
+    private double calculatePercolationThreshold(Percolation p) {
+        return (p.sitesOpened/(double)(N*N));
+    }
+
     public void runSimulation() {
         for(int i=0; i<trials; ++i) {
             Percolation p = new Percolation(N);
@@ -24,7 +28,7 @@ public class PercolationStats {
                 int col = getRandInt();
                 p.open(row, col);
             }
-            thresholds[i] = p.getPercolationThreshold();
+            thresholds[i] = calculatePercolationThreshold(p);
         }
     }
 

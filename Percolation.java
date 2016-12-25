@@ -2,7 +2,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private int N;
-    private int sitesOpened;
+    public int sitesOpened;
     private boolean[][] grid;
     private WeightedQuickUnionUF wqu;
 
@@ -134,10 +134,6 @@ public class Percolation {
             }
             System.out.print("]\n");
         }
-    }
-
-    public double getPercolationThreshold() {
-        return (sitesOpened/(double)(N*N));
     }
 
 
