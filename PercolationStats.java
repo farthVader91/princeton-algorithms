@@ -37,11 +37,11 @@ public class PercolationStats {
     }
 
     public double confidenceLo() {
-        return 1.0;
+        return (mean() - ((1.96 * stddev())/Math.sqrt(trials)));
     }
 
     public double confidenceHi() {
-        return 1.0;
+        return (mean() + ((1.96 * stddev())/Math.sqrt(trials)));
     }
 
     private int getRandInt() {
@@ -54,6 +54,16 @@ public class PercolationStats {
             Integer.parseInt(args[1])
         );
         ps.runSimulation();
-        System.out.println(Double.toString(ps.mean()));
+        String meanStr = String.format("%-25s = %.16f", "mean", ps.mean());
+        String stddevStr = String.format("%-25s = %.16f", "stddev", ps.stddev());
+        String confStr = String.format(
+            "%-25s = %.16f, %.16f",
+            "95% confidence interval",
+            ps.confidenceLo(),
+            ps.confidenceHi()
+        );
+        System.out.println(meanStr);
+        System.out.println(stddevStr);
+        System.out.println(confStr);
     }
 }
