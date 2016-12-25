@@ -1,7 +1,9 @@
+import java.util.concurrent.ThreadLocalRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private int N;
+    private int sitesOpened;
     private boolean[][] grid;
     private WeightedQuickUnionUF wqu;
 
@@ -26,6 +28,7 @@ public class Percolation {
         // for internal indexing
         row = row - 1; 
         col = col - 1;
+        if(grid[row][col]) { return; }
 
         try {
             if(grid[row - 1][col]) {
@@ -35,7 +38,7 @@ public class Percolation {
                 );
             }
         } catch(IndexOutOfBoundsException e) {
-            System.out.println('!');
+            // System.out.println('!');
         } finally {
             try {
                 if(grid[row + 1][col]) {
@@ -45,7 +48,7 @@ public class Percolation {
                     );
                 }
             } catch(IndexOutOfBoundsException e) {
-                System.out.println('!');
+                // System.out.println('!');
             } finally {
                 try {
                     if(grid[row][col - 1]) {
@@ -55,7 +58,7 @@ public class Percolation {
                         );
                     }
                 } catch(IndexOutOfBoundsException e) {
-                    System.out.println('!');
+                    // System.out.println('!');
                 } finally {
                     try {
                         if(grid[row][col + 1]) {
@@ -65,13 +68,14 @@ public class Percolation {
                             );
                         }
                     } catch(IndexOutOfBoundsException e) {
-                        System.out.println('!');
+                        // System.out.println('!');
                     }
                 }
             }
         }
 
         grid[row][col] = true;
+        sitesOpened++;
         if(row == N-1) {
             // connect to lower virtual root
             int lvr = (N * N) + 1;
@@ -143,20 +147,26 @@ public class Percolation {
         );
     }
 
+    public void printPercolationThreshold() {
+        float threshold = (sitesOpened/(float)(N*N));
+        System.out.println(Float.toString(threshold));
+    }
+
+    private int getRandInt() {
+        return ThreadLocalRandom.current().nextInt(1, N + 1);
+    }
+
     public static void main(String[] args) {
         int size = Integer.parseInt(args[0]);
         Percolation p = new Percolation(size);
-        // p.open(1, 4);
-        p.open(1, 1);
-        p.open(2, 1);
-        p.runSimulation();
-        p.open(3, 1);
-        p.open(3, 2);
-        p.open(4, 3);
-        p.runSimulation();
+        // Identify percolation threshold
+        while(true) {
+            int row = p.getRandInt();
+            int col = p.getRandInt();
+            p.open(row, col);
+            if(p.percolates()) { break; }
+        }
+        p.printPercolationThreshold();
         p.printGrid();
-        System.out.println(Boolean.toString(p.isFull(3, 2)));
-        System.out.println(Boolean.toString(p.isFull(3, 3)));
-        System.out.println(Boolean.toString(p.percolates()));
     }
 }
