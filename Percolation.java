@@ -1,4 +1,3 @@
-import java.util.concurrent.ThreadLocalRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
@@ -137,36 +136,14 @@ public class Percolation {
         }
     }
 
-    public void runSimulation() {
-        System.out.println(
-            Boolean.toString(
-                wqu.connected(
-                    effectiveIndex(0,0), effectiveIndex(2,1)
-                )
-            )
-        );
+    public double getPercolationThreshold() {
+        return (sitesOpened/(double)(N*N));
     }
 
-    public void printPercolationThreshold() {
-        float threshold = (sitesOpened/(float)(N*N));
-        System.out.println(Float.toString(threshold));
-    }
-
-    private int getRandInt() {
-        return ThreadLocalRandom.current().nextInt(1, N + 1);
-    }
 
     public static void main(String[] args) {
         int size = Integer.parseInt(args[0]);
         Percolation p = new Percolation(size);
-        // Identify percolation threshold
-        while(true) {
-            int row = p.getRandInt();
-            int col = p.getRandInt();
-            p.open(row, col);
-            if(p.percolates()) { break; }
-        }
-        p.printPercolationThreshold();
         p.printGrid();
     }
 }
