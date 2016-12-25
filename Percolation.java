@@ -2,7 +2,6 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private int N;
-    public int sitesOpened;
     private boolean[][] grid;
     private WeightedQuickUnionUF wqu;
 
@@ -27,7 +26,6 @@ public class Percolation {
         // for internal indexing
         row = row - 1; 
         col = col - 1;
-        if(grid[row][col]) { return; }
 
         try {
             if(grid[row - 1][col]) {
@@ -74,7 +72,6 @@ public class Percolation {
         }
 
         grid[row][col] = true;
-        sitesOpened++;
         if(row == N-1) {
             // connect to lower virtual root
             int lvr = (N * N) + 1;
@@ -126,20 +123,8 @@ public class Percolation {
         return wqu.connected(gridSize, gridSize + 1);
     }
 
-    public void printGrid() {
-        for(int p=0;p<N;p++) {
-            System.out.print("[ ");
-            for(int q=0;q<N;q++) {
-                System.out.print(Boolean.toString(grid[p][q]) + ' ');
-            }
-            System.out.print("]\n");
-        }
-    }
-
-
     public static void main(String[] args) {
         int size = Integer.parseInt(args[0]);
         Percolation p = new Percolation(size);
-        p.printGrid();
     }
 }

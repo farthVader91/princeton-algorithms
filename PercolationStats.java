@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.StdStats;
 public class PercolationStats {
     private int N;
     private int trials;
-    private double[] thresholds;
+    public double[] thresholds;
 
     public PercolationStats(int n, int t) {
         if(n <= 0 || t <= 0) {
@@ -15,20 +15,24 @@ public class PercolationStats {
         trials = t;
     }
 
-    private double calculatePercolationThreshold(Percolation p) {
-        return (p.sitesOpened/(double)(N*N));
+    private double calculatePercolationThreshold(int sitesOpened) {
+        return (sitesOpened/(double)(N*N));
     }
 
-    public void runSimulation() {
+    private void runSimulation() {
         for(int i=0; i<trials; ++i) {
             Percolation p = new Percolation(N);
+            int sitesOpened = 0;
             while(!p.percolates()) {
                 // open random row and column
                 int row = getRandInt();
                 int col = getRandInt();
-                p.open(row, col);
+                if(!p.isOpen(row, col)) {
+                    p.open(row, col);
+                    sitesOpened++;
+                }
             }
-            thresholds[i] = calculatePercolationThreshold(p);
+            thresholds[i] = calculatePercolationThreshold(sitesOpened);
         }
     }
 
