@@ -1,7 +1,7 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private int N;
+    private int size;
     private boolean[][] grid;
     private WeightedQuickUnionUF wqu;
 
@@ -9,17 +9,17 @@ public class Percolation {
         if (n < 0) {
             throw new IllegalArgumentException();
         }
-        N = n;
+        size = n;
         grid = new boolean[n][n];
-        wqu = new WeightedQuickUnionUF((n*n) + 2); // for applying "clever trick"
+        wqu = new WeightedQuickUnionUF((n * n) + 2); // for applying "clever trick"
     }
 
     private int effectiveIndex(int row, int col) {
-        return (row * N) + col;
+        return (row * size) + col;
     }
 
     public void open(int row, int col) {
-        if (row > N || col > N) {
+        if (row > size || col > size) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -28,43 +28,43 @@ public class Percolation {
         col = col - 1;
 
         try {
-            if(grid[row - 1][col]) {
+            if (grid[row - 1][col]) {
                 wqu.union(
                     effectiveIndex(row - 1, col),
                     effectiveIndex(row, col)
                 );
             }
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             // System.out.println('!');
         } finally {
             try {
-                if(grid[row + 1][col]) {
+                if (grid[row + 1][col]) {
                     wqu.union(
                         effectiveIndex(row + 1, col),
                         effectiveIndex(row, col)
                     );
                 }
-            } catch(IndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException e) {
                 // System.out.println('!');
             } finally {
                 try {
-                    if(grid[row][col - 1]) {
+                    if (grid[row][col - 1]) {
                         wqu.union(
                             effectiveIndex(row, col - 1),
                             effectiveIndex(row, col)
                         );
                     }
-                } catch(IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException e) {
                     // System.out.println('!');
                 } finally {
                     try {
-                        if(grid[row][col + 1]) {
+                        if (grid[row][col + 1]) {
                             wqu.union(
                                 effectiveIndex(row, col + 1),
                                 effectiveIndex(row, col)
                             );
                         }
-                    } catch(IndexOutOfBoundsException e) {
+                    } catch (IndexOutOfBoundsException e) {
                         // System.out.println('!');
                     }
                 }
@@ -72,16 +72,16 @@ public class Percolation {
         }
 
         grid[row][col] = true;
-        if(row == N-1) {
+        if (row == size-1) {
             // connect to lower virtual root
-            int lvr = (N * N) + 1;
+            int lvr = (size * size) + 1;
             wqu.union(
                 effectiveIndex(row, col),
                 lvr
             );
-        } else if(row == 0) {
+        } else if (row == 0) {
             // connect to upper virtual root
-            int uvr = (N * N) + 0;
+            int uvr = (size * size) + 0;
             wqu.union(
                 effectiveIndex(row, col),
                 uvr
@@ -90,14 +90,14 @@ public class Percolation {
     }
 
     public boolean isOpen(int row, int col) {
-        if (row > N || col > N) {
+        if (row > size || col > size) {
             throw new IndexOutOfBoundsException();
         }
-        return grid[row-1][col-1];
+        return grid[row - 1][col - 1];
     }
 
     public boolean isFull(int row, int col) {
-        if (row > N || col > N) {
+        if (row > size || col > size) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -105,7 +105,10 @@ public class Percolation {
         row = row - 1; 
         col = col - 1;
 
-        for(int i=0; i<N;++i) {
+        if (row == 0) {
+            return false;
+        }
+        for (int i = 0; i < size; ++i) {
             if (wqu.connected(
                 effectiveIndex(row, col),
                 effectiveIndex(0, i)
@@ -117,14 +120,15 @@ public class Percolation {
     }
 
     public boolean percolates() {
-        for(int i=0; i<N; ++i) {
+        for (int i = 0; i < size; ++i) {
         }
-        int gridSize = N * N;
+        int gridSize = size * size;
         return wqu.connected(gridSize, gridSize + 1);
     }
 
     public static void main(String[] args) {
         int size = Integer.parseInt(args[0]);
         Percolation p = new Percolation(size);
+        System.out.println(Boolean.toString(p.isFull(1, 6)));
     }
 }

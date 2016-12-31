@@ -2,32 +2,32 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
-    private int N;
+    private int size;
     private int trials;
-    public double[] thresholds;
+    private double[] thresholds;
 
     public PercolationStats(int n, int t) {
-        if(n <= 0 || t <= 0) {
+        if (n <= 0 || t <= 0) {
             throw new IllegalArgumentException();
         }
         thresholds = new double[t];
-        N = n;
+        size = n;
         trials = t;
     }
 
     private double calculatePercolationThreshold(int sitesOpened) {
-        return (sitesOpened/(double)(N*N));
+        return (sitesOpened / (double)(size * size));
     }
 
     private void runSimulation() {
-        for(int i=0; i<trials; ++i) {
-            Percolation p = new Percolation(N);
+        for (int i = 0; i < trials; ++i) {
+            Percolation p = new Percolation(size);
             int sitesOpened = 0;
-            while(!p.percolates()) {
+            while (!p.percolates()) {
                 // open random row and column
                 int row = getRandInt();
                 int col = getRandInt();
-                if(!p.isOpen(row, col)) {
+                if (!p.isOpen(row, col)) {
                     p.open(row, col);
                     sitesOpened++;
                 }
@@ -45,15 +45,15 @@ public class PercolationStats {
     }
 
     public double confidenceLo() {
-        return (mean() - ((1.96 * stddev())/Math.sqrt(trials)));
+        return (mean() - ((1.96 * stddev()) / Math.sqrt(trials)));
     }
 
     public double confidenceHi() {
-        return (mean() + ((1.96 * stddev())/Math.sqrt(trials)));
+        return (mean() + ((1.96 * stddev()) / Math.sqrt(trials)));
     }
 
     private int getRandInt() {
-        return 1 + StdRandom.uniform(N);
+        return 1 + StdRandom.uniform(size);
     }
 
     public static void main(String[] args) {
