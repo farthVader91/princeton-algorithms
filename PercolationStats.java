@@ -13,27 +13,20 @@ public class PercolationStats {
         thresholds = new double[t];
         size = n;
         trials = t;
+        for (int i = 0; i < t; ++i) {
+            Percolation p = new Percolation(n);
+	    while (!p.percolates()) {
+                // open random row and column
+                int row = getRandInt();
+                int col = getRandInt();
+		p.open(row,col);
+            }
+	    addThreshold(i, p.numberOfOpenSites());
+        }	
     }
 
     private double calculatePercolationThreshold(int sitesOpened) {
         return (sitesOpened / (double)(size * size));
-    }
-
-    private void runSimulation() {
-        for (int i = 0; i < trials; ++i) {
-            Percolation p = new Percolation(size);
-            int sitesOpened = 0;
-            while (!p.percolates()) {
-                // open random row and column
-                int row = getRandInt();
-                int col = getRandInt();
-                if (!p.isOpen(row, col)) {
-                    p.open(row, col);
-                    sitesOpened++;
-                }
-            }
-            thresholds[i] = calculatePercolationThreshold(sitesOpened);
-        }
     }
 
     public double mean() {
@@ -56,12 +49,15 @@ public class PercolationStats {
         return 1 + StdRandom.uniform(size);
     }
 
+    private void addThreshold(int pos, int opened) {
+	thresholds[pos] = calculatePercolationThreshold(opened);
+    }
+    
     public static void main(String[] args) {
-        PercolationStats ps = new PercolationStats(
-            Integer.parseInt(args[0]),
-            Integer.parseInt(args[1])
-        );
-        ps.runSimulation();
+	int n = Integer.parseInt(args[0]);
+	int t = Integer.parseInt(args[1]);
+        PercolationStats ps = new PercolationStats(n, t);
+
         String meanStr = String.format("%-25s = %.16f", "mean", ps.mean());
         String stddevStr = String.format("%-25s = %.16f", "stddev", ps.stddev());
         String confStr = String.format(
