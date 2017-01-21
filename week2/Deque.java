@@ -6,15 +6,15 @@ public class Deque<Item> implements Iterable<Item> {
     private int n;
     private int first;
     private int last;
-    
+
     public Deque() {
         q = (Item[])new Object[2];
     }
-    
+
     public boolean isEmpty() {
         return n == 0;
     }
-    
+
     private void resize(int capacity) {
 	assert(capacity >= n);
         Item[] temp = (Item[])new Object[capacity];
@@ -29,36 +29,31 @@ public class Deque<Item> implements Iterable<Item> {
     public int size() {
 	return n;
     }
-    
+
     public void addFirst(Item item) {
 	if (item == null) throw new NullPointerException();
 	if (n == q.length) resize(2 * q.length); // double array-size if necessary
 	if (first == 0) {
-	    first = q.length - 1; // wrap-around from behind
-	    q[first] = item;
-	} else q[--first] = item; // add item
+	    first = q.length; // wrap-around from behind
+	}
+        q[--first] = item; // add item
 	n++;
     }
 
     public void addLast(Item item) {
 	if (item == null) throw new NullPointerException();
 	if (n == q.length) resize(2 * q.length); // double array-size if necessary
-	if (last == (q.length - 1)) {
-	    last = 0; // wrap-around from front
-	    q[last] = item;
-	} else q[++last] = item; // add item
+        last = (last + 1) % q.length;
+	q[last] = item; // add item
 	n++;
     }
 
     public Item removeFirst() {
 	if (n == 0) throw new NoSuchElementException();
 	if (n <= (q.length / 4)) resize(q.length / 2);
-	Item item;
-	if (first == (q.length - 1)) {
-	    first = 0;
-	    item = q[first];
-	} else item = q[++first];
-	q[first] = null // to avoid loitering
+	Item item = q[first];
+	q[first] = null; // to avoid loitering
+        first = (first + 1) % q.length;
 	n--;
 	return item;
     }
@@ -66,12 +61,12 @@ public class Deque<Item> implements Iterable<Item> {
     public Item removeLast() {
 	if (n == 0) throw new NoSuchElementException();
 	if (n <= (q.length / 4)) resize(q.length / 2);
-	Item item;
+	Item item = q[last];
+	q[last] = null; // to avoid loitering
 	if (last == 0) {
-	    last = q.length - 1;
-	    item = q[last];
-	} else item = q[--last];
-	q[last] = null // to avoid loitering
+	    last = q.length;
+	}
+        last--;
 	n--;
 	return item;
     }
@@ -98,9 +93,11 @@ public class Deque<Item> implements Iterable<Item> {
         dq.addFirst(1);
         dq.addFirst(2);
         dq.addFirst(3);
-        dq.addFirst(7);
-        dq.addFirst(8);
-        dq.addFirst(9);
+        dq.addLast(4);
+        dq.addLast(5);
+        dq.addLast(6);
+        System.out.println(String.valueOf(dq.removeFirst()));
+        System.out.println(String.valueOf(dq.removeLast()));
 	for(int i: dq) {
 	    System.out.println(i);
 	}
