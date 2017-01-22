@@ -18,7 +18,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return N;
     }
 
-
+    public Item sample() {
+        int idx = StdRandom.uniform(N + 1);
+        Item tmp = q[idx];
+        return tmp;
+    }
 
     private void resize(int capacity) {
         assert(capacity >= N);
@@ -88,7 +92,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             return item;
         }
     }
-
 
     public static void main(String[] args) {
         RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
