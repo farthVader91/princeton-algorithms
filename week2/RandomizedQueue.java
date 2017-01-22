@@ -2,7 +2,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdRandom;
 
-public class RandomizedQueue<Item> {
+public class RandomizedQueue<Item> implements Iterable<Item> {
     private Item[] q;
     private int N;
 
@@ -13,6 +13,12 @@ public class RandomizedQueue<Item> {
     public boolean isEmpty() {
         return (N == 0);
     }
+
+    public int size() {
+        return N;
+    }
+
+
 
     private void resize(int capacity) {
         assert(capacity >= N);
@@ -48,6 +54,42 @@ public class RandomizedQueue<Item> {
         return item;
     }
 
+    public Iterator<Item> iterator() {
+        return new ArrayIterator();
+    }
+
+    private class ArrayIterator implements Iterator<Item> {
+        private int i = 0;
+        /*
+        public ArrayIterator() {
+            super();
+            // Trick: We will shuffle the internal array in-place
+            // and simple iterate over the array from first to last.
+            shuffleArray(q);
+        }
+        */
+
+        private void shuffleArray(Item[] arr) {
+            for(int i = N - 1; i > 0; i--) {
+                int idx = StdRandom.uniform(i + 1);
+                Item tmp = arr[idx];
+                arr[idx] = arr[i];
+                arr[i] = tmp;
+            }
+        }
+
+        public boolean hasNext() { return i < N; }
+        public void remove() { throw new UnsupportedOperationException(); }
+
+        public Item next() {
+            if (i == 0) shuffleArray(q);
+            if (!hasNext()) throw new NoSuchElementException();
+            Item item = q[i++];
+            return item;
+        }
+    }
+
+
     public static void main(String[] args) {
         RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
         rq.enqueue(5);
@@ -57,10 +99,15 @@ public class RandomizedQueue<Item> {
         rq.enqueue(1);
         rq.enqueue(9);
         System.out.println(rq.dequeue());
+        for(int i: rq) {
+            System.out.println(String.valueOf(i));
+        }
+        /*
         System.out.println(rq.dequeue());
         System.out.println(rq.dequeue());
         System.out.println(rq.dequeue());
         System.out.println(rq.dequeue());
         System.out.println(rq.dequeue());
+        */
     }
 }
