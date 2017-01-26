@@ -2,104 +2,88 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
-    private Item[] q;
     private int n;
-    private int first;
-    private int last;
+    private Node<Item> first, last;
 
-    public Deque() {
-        q = (Item[])new Object[2];
+    private class Node<Item> {
+        private Item item;
+        private Node<Item> next;
+        private Node<Item> prev;
     }
 
     public boolean isEmpty() {
         return n == 0;
     }
 
-    private void resize(int capacity) {
-	assert(capacity >= n);
-        Item[] temp = (Item[])new Object[capacity];
-        for (int i = 0; i < n; i++) {
-            temp[i] = q[(first + i) % q.length];
-        }
-	q = temp;
-	first = 0;
-	last = n - 1;
-    }
-
     public int size() {
-	return n;
+        return n;
     }
 
     public void addFirst(Item item) {
-	if (item == null) throw new NullPointerException();
-	if (n == q.length) resize(2 * q.length); // double array-size if necessary
-	if (first == 0) {
-	    first = q.length; // wrap-around from behind
-	}
-        q[--first] = item; // add item
-	n++;
+        if (item == null) throw new NullPointerException();
+        Node<Item> temp = new Node<Item>();
+        temp.item = item;
+        temp.next = first;
+        if (first != null) first.prev = temp;
+        else last = temp;
+        first = temp;
+        n++;
     }
 
     public void addLast(Item item) {
-	if (item == null) throw new NullPointerException();
-	if (n == q.length) resize(2 * q.length); // double array-size if necessary
-        last = (last + 1) % q.length;
-	q[last] = item; // add item
-	n++;
+        if (item == null) throw new NullPointerException();
+        Node<Item> temp = new Node<Item>();
+        temp.item = item;
+        temp.prev = last;
+        if (last != null) last.next = temp;
+        else first = temp;
+        last = temp;
+        n++;
     }
 
     public Item removeFirst() {
-	if (n == 0) throw new NoSuchElementException();
-	if (n <= (q.length / 4)) resize(q.length / 2);
-	Item item = q[first];
-	q[first] = null; // to avoid loitering
-        first = (first + 1) % q.length;
-	n--;
-	return item;
+        if (n == 0) throw new NoSuchElementException();
+        Node<Item> temp = first;
+        first = first.next;
+        if (first != null) first.prev = null;
+        else last = null;
+       n--;
+        return temp.item;
     }
 
     public Item removeLast() {
-	if (n == 0) throw new NoSuchElementException();
-	if (n <= (q.length / 4)) resize(q.length / 2);
-	Item item = q[last];
-	q[last] = null; // to avoid loitering
-	if (last == 0) {
-	    last = q.length;
-	}
-        last--;
-	n--;
-	return item;
+        if (n == 0) throw new NoSuchElementException();
+        Node<Item> temp = last;
+        last = last.prev;
+        if (last != null) last.next = null;
+        else first = null;
+        n--;
+        return temp.item;
     }
 
     public Iterator<Item> iterator() {
-	return new ArrayIterator();
+        return new ListIterator();
     }
 
-    private class ArrayIterator implements Iterator<Item> {
-	private int i = 0;
-	public boolean hasNext() { return i < n; }
-	public void remove() { throw new UnsupportedOperationException(); }
+    private class ListIterator implements Iterator<Item> {
+        private Node<Item> cur = first;
+        public boolean hasNext() { return cur != null; }
+        public void remove() { throw new UnsupportedOperationException(); }
 
-	public Item next() {
-	    if (!hasNext()) throw new NoSuchElementException();
-	    Item item = q[(i + first) % q.length];
-	    i++;
-	    return item;
-	}
+        public Item next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            Item item = cur.item;
+            cur = cur.next;
+            return item;
+        }
     }
 
     public static void main(String[] args) {
         Deque<Integer> dq = new Deque<Integer>();
-        dq.addFirst(1);
-        dq.addFirst(2);
-        dq.addFirst(3);
-        dq.addLast(4);
-        dq.addLast(5);
-        dq.addLast(6);
+        dq.addFirst(0);
         System.out.println(String.valueOf(dq.removeFirst()));
-        System.out.println(String.valueOf(dq.removeLast()));
-	for(int i: dq) {
-	    System.out.println(i);
-	}
+        for (int i: dq) {
+            System.out.println(i);
+        }
     }
 }
