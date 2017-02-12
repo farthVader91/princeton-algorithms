@@ -3,19 +3,19 @@ import edu.princeton.cs.algs4.StdDraw;
 
 public class BruteCollinearPoints {
     private Point[] ps;
+    private int n;
 
     public BruteCollinearPoints(Point[] points) {
         if (points == null) throw new java.lang.NullPointerException();
-        int n = points.length;
+        n = points.length;
         ps = new Point[n];
         for (int i = 0; i < n; i++) {
-            if (points[i] == null) { throw new java.lang.NullPointerException();}
+            if (points[i] == null) { throw new java.lang.NullPointerException(); }
             for (int j = 0; j < i; j++) {
                 if (ps[j] == points[i]) { throw new java.lang.IllegalArgumentException(); }
             }
             ps[i] = points[i];
         }
-        Arrays.sort(ps);
     }
 
     public int numberOfSegments() {
@@ -23,7 +23,7 @@ public class BruteCollinearPoints {
     }
 
     public LineSegment[] segments() {
-        int n = ps.length;
+        Arrays.sort(ps);
         LineSegment[] ls = new LineSegment[n * n];
         double s1, s2, s3;
         int segmentIdx = 0;
@@ -40,7 +40,7 @@ public class BruteCollinearPoints {
             }
         }
         LineSegment[] out = new LineSegment[segmentIdx];
-        for(int i = 0; i < segmentIdx; i++) out[i] = ls[i];
+        for (int i = 0; i < segmentIdx; i++) out[i] = ls[i];
         return out;
     }
 
@@ -55,7 +55,7 @@ public class BruteCollinearPoints {
         StdDraw.enableDoubleBuffering();
         StdDraw.setXscale(0, 2000);
         StdDraw.setYscale(0, 2000);
-        for(LineSegment seg: br.segments()) {
+        for (LineSegment seg: br.segments()) {
             seg.draw();
         }
         StdDraw.show();

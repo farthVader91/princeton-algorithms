@@ -11,15 +11,12 @@ public class FastCollinearPoints {
         n = points.length;
         ps = new Point[n];
         for (int i = 0; i < n; i++) {
-            if (points[i] == null) { throw new java.lang.NullPointerException();}
+            if (points[i] == null) { throw new java.lang.NullPointerException(); }
             for (int j = 0; j < i; j++) {
                 if (ps[j] == points[i]) { throw new java.lang.IllegalArgumentException(); }
             }
             ps[i] = points[i];
         }
-        // Sort elements by natural order. This avoids redundantly calculating
-        // relative slopes.
-        Arrays.sort(ps);
     }
 
     public int numberOfSegments() {
@@ -27,9 +24,12 @@ public class FastCollinearPoints {
     }
 
     public LineSegment[] segments() {
+        // Sort elements by natural order. This avoids redundantly calculating
+        // relative slopes.
+        Arrays.sort(ps);
         LineSegment[] lss = new LineSegment[n * n];
         int segIdx = -1;
-        for(int i = 0; i < n - 3; i++) {
+        for (int i = 0; i < n - 3; i++) {
             Point p = ps[i];
             // Get comparator
             Comparator<Point> c = p.slopeOrder();
@@ -40,36 +40,19 @@ public class FastCollinearPoints {
             // Each group containing a minimum of 3 elements;
             int matchedSoFar = 0;
             double curSlope, lastSlope = Double.NEGATIVE_INFINITY;
-            for(int j = 0; j < n - i - 1; j++) {
+            for (int j = 0; j < n - i - 1; j++) {
                 curSlope = p.slopeTo(tmpArr[j]);
-                if(curSlope == lastSlope) matchedSoFar++;
+                if (curSlope == lastSlope) matchedSoFar++;
                 else {
-                    if(matchedSoFar >= 2) lss[++segIdx] = new LineSegment(p, tmpArr[j]);
+                    if (matchedSoFar >= 2) lss[++segIdx] = new LineSegment(p, tmpArr[j]);
                     matchedSoFar = 0;
                 }
                 lastSlope = curSlope;
             }
             // Handle
-            if(matchedSoFar >= 2) lss[++segIdx] = new LineSegment(p, tmpArr[n - i - 2]);
+            if (matchedSoFar >= 2) lss[++segIdx] = new LineSegment(p, tmpArr[n - i - 2]);
         }
         LineSegment[] out = Arrays.copyOfRange(lss, 0, segIdx + 1);
         return out;
-    }
-
-    public static void main(String[] args) {
-        Point[] points = {
-            new Point(0, 0),
-            new Point(10, 10),
-            new Point(100, 100),
-            new Point(1000, 1000),
-        };
-        FastCollinearPoints br = new FastCollinearPoints(points);
-        StdDraw.enableDoubleBuffering();
-        StdDraw.setXscale(0, 2000);
-        StdDraw.setYscale(0, 2000);
-        for(LineSegment seg: br.segments()) {
-            seg.draw();
-        }
-        StdDraw.show();
     }
 }
