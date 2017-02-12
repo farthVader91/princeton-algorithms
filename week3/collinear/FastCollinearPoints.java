@@ -3,8 +3,8 @@ import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class FastCollinearPoints {
-    Point[] ps;
-    int n;
+    private Point[] ps;
+    private int n;
 
     public FastCollinearPoints(Point[] points) {
         if (points == null) throw new java.lang.NullPointerException();

@@ -2,7 +2,7 @@ import java.util.Arrays;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class BruteCollinearPoints {
-    Point[] ps;
+    private Point[] ps;
 
     public BruteCollinearPoints(Point[] points) {
         if (points == null) throw new java.lang.NullPointerException();
