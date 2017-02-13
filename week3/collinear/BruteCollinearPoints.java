@@ -8,13 +8,14 @@ public class BruteCollinearPoints {
     public BruteCollinearPoints(Point[] points) {
         if (points == null) throw new java.lang.NullPointerException();
         n = points.length;
-        ps = new Point[n];
+        ps = Arrays.copyOf(points, n);
+        Arrays.sort(ps);
+        Point curVal, lastVal = null;
         for (int i = 0; i < n; i++) {
-            if (points[i] == null) { throw new java.lang.NullPointerException(); }
-            for (int j = 0; j < i; j++) {
-                if (ps[j] == points[i]) { throw new java.lang.IllegalArgumentException(); }
-            }
-            ps[i] = points[i];
+            curVal = ps[i];
+            if (curVal == null) throw new java.lang.NullPointerException();
+            if((lastVal != null) && (curVal.compareTo(lastVal) == 0)) throw new java.lang.IllegalArgumentException();
+            lastVal = curVal;
         }
     }
 
@@ -23,7 +24,6 @@ public class BruteCollinearPoints {
     }
 
     public LineSegment[] segments() {
-        Arrays.sort(ps);
         LineSegment[] ls = new LineSegment[n * n];
         double s1, s2, s3;
         int segmentIdx = 0;
@@ -46,7 +46,7 @@ public class BruteCollinearPoints {
 
     public static void main(String[] args) {
         Point[] points = {
-            new Point(0, 0),
+            new Point(10, 10),
             new Point(10, 10),
             new Point(100, 100),
             new Point(1000, 1000),
