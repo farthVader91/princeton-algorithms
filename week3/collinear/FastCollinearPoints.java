@@ -28,27 +28,27 @@ public class FastCollinearPoints {
         // relative slopes.
         LineSegment[] lss = new LineSegment[n * n];
         int segIdx = -1;
-        for (int i = 0; i < n - 3; i++) {
-            Point p = ps[i];
-            // Get comparator
-            Comparator<Point> c = p.slopeOrder();
-            Point[] tmpArr = Arrays.copyOfRange(ps, i + 1, n);
-            int tmpArrLen = tmpArr.length;
-            // Sort elements in `tmp` array by slopeOrder
-            Arrays.sort(tmpArr, c);
-            // Identify groups of elements with same slope.
-            // Each group containing a minimum of 3 elements;
-            int lastMatchIdx = 0;
-            int j = 1;
-            for (j = 1; j < tmpArrLen; j++) {
-                if (c.compare(tmpArr[lastMatchIdx], tmpArr[j]) != 0) {
-                    if (j - lastMatchIdx >= 2) lss[++segIdx] = new LineSegment(p, tmpArr[j - 1]);
-                    lastMatchIdx = j;
+        Point[] copy = Arrays.copyOf(ps, n);
+        for (int i = 0; i < n; i++) {
+            Point p = copy[i];
+            Arrays.sort(ps, 0, n, p.slopeOrder());
+            int lo = 1, hi = 2;
+            boolean flag = p.compareTo(ps[lo]) < 0 ? true : false;
+            while(hi < n) {
+                if(ps[lo].slopeTo(p) == ps[hi].slopeTo(p)) {
+                    if (p.compareTo(ps[hi]) >= 0) flag = false;
+                } else {
+                    if (flag && hi - lo >= 3) lss[++segIdx] = new LineSegment(p, ps[hi - 1]);
+                    // Reset lo, flag
+                    lo = hi;
+                    flag = p.compareTo(ps[lo]) < 0 ? true : false;
                 }
+                hi++;
             }
-            if (j - lastMatchIdx > 2) lss[++segIdx] = new LineSegment(p, tmpArr[j - 1]);
+            if (flag && hi - lo >= 3) lss[++segIdx] = new LineSegment(p, ps[hi - 1]);
         }
-        LineSegment[] out = Arrays.copyOfRange(lss, 0, segIdx + 1);
+        LineSegment[] out = new LineSegment[segIdx + 1];
+        for(int i = 0; i <= segIdx; i++) out[i] = lss[i];
         return out;
     }
 }

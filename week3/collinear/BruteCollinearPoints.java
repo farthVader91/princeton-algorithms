@@ -14,7 +14,7 @@ public class BruteCollinearPoints {
         for (int i = 0; i < n; i++) {
             curVal = ps[i];
             if (curVal == null) throw new java.lang.NullPointerException();
-            if((lastVal != null) && (curVal.compareTo(lastVal) == 0)) throw new java.lang.IllegalArgumentException();
+            if ((lastVal != null) && (curVal.compareTo(lastVal) == 0)) throw new java.lang.IllegalArgumentException();
             lastVal = curVal;
         }
     }
